@@ -1,32 +1,33 @@
-package com.peertutor.TutorMgr.model;
+package com.peertutor.TutorMgr.service.dto;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.peertutor.TutorMgr.model.Tutor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Table(name = "tutor")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Tutor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+/**
+ * A DTO for the {@link com.peertutor.TutorMgr.model.Tutor} entity.
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class TutorDTO implements Serializable {
+
     private Long id;
 
-    @Column(name = "account_name", nullable = false, unique = true)
     private String accountName;
 
-    @Column(name = "display_name")
     private String displayName;
 
-    @Column(name = "introduction")
     private String introduction;
 
-    @Column(name = "subjects")
     private String subjects;
 
-    @Column(name = "certificates")
     private String certificates;
 
     public Long getId() {
@@ -37,11 +38,11 @@ public class Tutor {
         this.id = id;
     }
 
-    public String getAccountName() {
+    public String getAccountId() {
         return accountName;
     }
 
-    public void setAccountName(String accountName) {
+    public void setAccountId(String accountName) {
         this.accountName = accountName;
     }
 
@@ -94,8 +95,13 @@ public class Tutor {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
+    @Override
     public String toString() {
-        return "Tutor{" +
+        return "Tutor {" +
                 "id=" + id +
                 ", displayName='" + displayName + '\'' +
                 '}';
