@@ -14,8 +14,6 @@ public class TutorProfileReq {
 
     public String displayName;
 
-    @NotNull
-    @NotEmpty
     public String accountName;
 
     public String introduction;

@@ -3,11 +3,14 @@ package com.peertutor.TutorMgr.service;
 import com.peertutor.TutorMgr.model.Tutor;
 import com.peertutor.TutorMgr.model.viewmodel.request.TutorProfileReq;
 import com.peertutor.TutorMgr.repository.TutorRepository;
+import com.peertutor.TutorMgr.service.dto.TutorCriteria;
 import com.peertutor.TutorMgr.service.dto.TutorDTO;
 import com.peertutor.TutorMgr.service.mapper.TutorMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +20,8 @@ public class TutorService {
     private final TutorMapper tutorMapper;
     @Autowired
     private TutorRepository tutorRepository;
+    @Autowired
+    private TutorQueryService tutorQueryService;
 
     public TutorService(TutorRepository tutorRepository, TutorMapper tutorMapper) {
         this.tutorRepository = tutorRepository;
@@ -35,11 +40,11 @@ public class TutorService {
     }
 
     public TutorDTO createTutorProfile(TutorProfileReq req) {
-        Tutor tutor = tutorRepository.findByAccountName(req.accountName);
+        Tutor tutor = tutorRepository.findByAccountName(req.name);
 
         if (tutor == null) {
             tutor = new Tutor();
-            tutor.setAccountName(req.accountName);
+            tutor.setAccountName(req.name);
         }
 
         if (req.displayName != null && !req.displayName.trim().isEmpty()) {
@@ -62,5 +67,10 @@ public class TutorService {
         TutorDTO result = tutorMapper.toDto(tutor);
 
         return result;
+    }
+
+    public Page<TutorDTO> getTutorByCriteria(TutorCriteria criteria, Pageable pageable) {
+        Page<TutorDTO> page = tutorQueryService.findByCriteria(criteria, pageable);
+        return page;
     }
 }
