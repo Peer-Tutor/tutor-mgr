@@ -1,4 +1,4 @@
-package com.peertutor.StudentMgr.util;
+package com.peertutor.TutorMgr.util;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
