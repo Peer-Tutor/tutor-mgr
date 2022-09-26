@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TutorService {
     private static final Logger logger = LoggerFactory.getLogger(TutorService.class);
@@ -28,13 +30,24 @@ public class TutorService {
         this.tutorMapper = tutorMapper;
     }
 
-    public TutorDTO getTutorProfile(String accountName) {
+    public TutorDTO getTutorProfileByAccountName(String accountName) {
         Tutor tutor = tutorRepository.findByAccountName(accountName);
 
         if (tutor == null) {
             return null;
         }
         TutorDTO result = tutorMapper.toDto(tutor);
+
+        return result;
+    }
+
+    public TutorDTO getTutorProfileById(Long id) {
+        Optional<Tutor> tutor = tutorRepository.findById(id);
+
+        if (!tutor.isPresent()) {
+            return null;
+        }
+        TutorDTO result = tutorMapper.toDto(tutor.get());
 
         return result;
     }

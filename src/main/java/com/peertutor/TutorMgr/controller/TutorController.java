@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -66,16 +67,56 @@ public class TutorController {
     }
 
     @GetMapping(path = "/tutor")
-    public @ResponseBody ResponseEntity<List<TutorProfileRes>> getTutorProfile(@RequestBody @Valid TutorProfileReq req, Pageable pageable) {
-        boolean result = authService.getAuthentication(req.name, req.sessionToken);
+    public @ResponseBody ResponseEntity<TutorProfileRes> getTutorProfile(
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "sessionToken") String sessionToken,
+            @RequestParam(name = "accountName") Optional<String> accountName,
+            @RequestParam(name = "id") Optional<Long> id
+    ) {
+        boolean result = authService.getAuthentication(name, sessionToken);
         if (!result) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        TutorCriteria criteria = new TutorCriteria(req);
+        TutorDTO tutorDTO = null;
+
+        if (id.isPresent()) {
+            tutorDTO = tutorService.getTutorProfileById(id.get());
+        } else if (accountName.isPresent()) {
+            tutorDTO = tutorService.getTutorProfileByAccountName(accountName.get());
+        }
+
+        if (tutorDTO == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        TutorProfileRes res = new TutorProfileRes();
+        res.displayName = tutorDTO.getDisplayName();
+        res.introduction = tutorDTO.getIntroduction();
+        res.subjects = tutorDTO.getSubjects();
+        res.certificates = tutorDTO.getCertificates();
+        res.id = tutorDTO.getId();
+
+        return ResponseEntity.ok().body(res);
+    }
+
+    @GetMapping(path = "/tutors")
+    public @ResponseBody ResponseEntity<List<TutorProfileRes>> getTutorProfile(
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "sessionToken") String sessionToken,
+            @RequestParam(name = "displayName") Optional<String> displayName,
+            @RequestParam(name = "subjects") Optional<String> subjects,
+            @RequestParam(name = "introduction") Optional<String> introduction,
+            @RequestParam(name = "certificates") Optional<String> certificates,
+            Pageable pageable) {
+        boolean result = authService.getAuthentication(name, sessionToken);
+        if (!result) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        TutorCriteria criteria = new TutorCriteria(displayName, subjects, introduction, certificates);
         Page<TutorDTO> page = tutorService.getTutorByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        List<TutorDTO> test = page.getContent();
         List<TutorProfileRes> filteredTutors = page.getContent().stream().map(tutorDTO -> {
             TutorProfileRes res = new TutorProfileRes();
             res.displayName = tutorDTO.getDisplayName();

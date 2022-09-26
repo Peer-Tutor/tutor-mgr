@@ -6,6 +6,7 @@ import io.github.jhipster.service.filter.StringFilter;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 
 public class TutorCriteria implements Serializable, Criteria {
@@ -24,7 +25,29 @@ public class TutorCriteria implements Serializable, Criteria {
 
     public TutorCriteria() {
     }
-    
+
+    public TutorCriteria(Optional<String> displayName, Optional<String> subjects, Optional<String> introduction, Optional<String> certificates) {
+        if (displayName.isPresent()) {
+            this.displayName = new StringFilter();
+            this.displayName.setContains(displayName.get());
+        }
+
+        if (subjects.isPresent()) {
+            this.subjects = new StringFilter();
+            this.subjects.setContains(subjects.get());
+        }
+
+        if (introduction.isPresent()) {
+            this.introduction = new StringFilter();
+            this.introduction.setContains(introduction.get());
+        }
+
+        if (certificates.isPresent()) {
+            this.certificates = new StringFilter();
+            this.certificates.setContains(certificates.get());
+        }
+    }
+
     public TutorCriteria(TutorProfileReq req) {
         if (req.displayName != null) {
             this.displayName = new StringFilter();
