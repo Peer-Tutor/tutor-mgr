@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface TutorRepository extends JpaRepository<Tutor, Long>, JpaSpecificationExecutor<Tutor> {
     Tutor findByAccountName(String accountName);
+
     List<Tutor> findByAccountNameIn(List<String> accountName);
 }
 

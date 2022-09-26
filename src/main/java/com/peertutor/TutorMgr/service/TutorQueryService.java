@@ -34,6 +34,7 @@ public class TutorQueryService extends QueryService<Tutor> {
 
     /**
      * Return a {@link List} of {@link TutorDTO} which matches the criteria from the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching entities.
      */
@@ -46,8 +47,9 @@ public class TutorQueryService extends QueryService<Tutor> {
 
     /**
      * Return a {@link Page} of {@link TutorDTO} which matches the criteria from the database.
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
+     * @param page     The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
@@ -55,11 +57,12 @@ public class TutorQueryService extends QueryService<Tutor> {
         log.debug("find by criteria : {}, page: {}", criteria, page);
         final Specification<Tutor> specification = createSpecification(criteria);
         return tuitionOrderRepository.findAll(specification, page)
-            .map(tuitionOrderMapper::toDto);
+                .map(tuitionOrderMapper::toDto);
     }
 
     /**
      * Function to convert {@link TutorCriteria} to a {@link Specification}
+     *
      * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching {@link Specification} of the entity.
      */
@@ -67,16 +70,16 @@ public class TutorQueryService extends QueryService<Tutor> {
         Specification<Tutor> specification = Specification.where(null);
         if (criteria != null) {
             if (criteria.getAccountName() != null) {
-                specification = specification.and(buildSpecification(criteria.getAccountName(), Tutor_.accountName));
+                specification = specification.and(buildStringSpecification(criteria.getAccountName(), Tutor_.accountName));
             }
             if (criteria.getDisplayName() != null) {
-                specification = specification.and(buildSpecification(criteria.getDisplayName(), Tutor_.displayName));
+                specification = specification.and(buildStringSpecification(criteria.getDisplayName(), Tutor_.displayName));
             }
             if (criteria.getSubjects() != null) {
-                specification = specification.and(buildSpecification(criteria.getSubjects(), Tutor_.subjects));
+                specification = specification.and(buildStringSpecification(criteria.getSubjects(), Tutor_.subjects));
             }
             if (criteria.getCertificates() != null) {
-                specification = specification.and(buildSpecification(criteria.getCertificates(), Tutor_.certificates));
+                specification = specification.and(buildStringSpecification(criteria.getCertificates(), Tutor_.certificates));
             }
 
         }
