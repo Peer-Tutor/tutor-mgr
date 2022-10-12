@@ -18,6 +18,7 @@ public class ResponseFilter extends OncePerRequestFilter {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Request-Method", "*");
         response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        response.addHeader("Access-Control-Expose-Headers", "X-Total-Count");
 
         filterChain.doFilter(request, response);
     }
